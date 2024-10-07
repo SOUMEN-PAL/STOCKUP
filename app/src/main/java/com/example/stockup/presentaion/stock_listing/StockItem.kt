@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.stockup.domain.models.stockListings.StockListData
 import com.example.stockup.utils.StockListState
 
@@ -18,12 +19,19 @@ fun StockItem(modifier: Modifier = Modifier , stockListData: StockListData) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ){
-        Text(text = stockListData.symbol)
-        Text(text = stockListData.name)
-        Text(text = stockListData.exchange)
-        Text(text = stockListData.country)
+//        Text(text = stockListData.symbol)
+//        Text(text = stockListData.name)
+
+        val companyName = stockListData.name.split(" ")
+
+
+        AsyncImage(
+            model = "https://logo.clearbit.com/${companyName.get(0)}.com",
+            contentDescription = "Translated description of what the image contains"
+        )
+
     }
 }

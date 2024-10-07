@@ -25,7 +25,7 @@ fun HomeScreen(modifier: Modifier = Modifier , viewModel: StocksViewModel) {
     ) {
 
         val stockListState by viewModel.stockListState.collectAsStateWithLifecycle()
-        var stockList = emptyList<StockListData>()
+        var stockList : List<Any> = emptyList()
         when(stockListState){
             is StockListState.Error -> Text("Error: ${(stockListState as StockListState.Error).errorMessage}" , Modifier.padding(12.dp))
             is StockListState.Loading -> CircularProgressIndicator()
@@ -35,7 +35,7 @@ fun HomeScreen(modifier: Modifier = Modifier , viewModel: StocksViewModel) {
 
         LazyColumn {
             items(stockList){
-                StockItem(stockListData = it)
+                StockItem(stockListData = it as StockListData)
             }
         }
     }

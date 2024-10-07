@@ -13,7 +13,7 @@ interface StockService {
         @Query("exchange") exchange : String
     ):Response<StockListModel>
 
-    @GET("symbol_serach")
+    @GET("symbol_search")
     suspend fun searchSymbol(
         @Query("symbol") symbol : String
     ):Response<StockSearchingModel>
