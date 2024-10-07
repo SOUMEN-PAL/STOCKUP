@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.stockup.presentaion.stock_listing.HomeScreen
 import com.example.stockup.presentaion.viewmodels.StocksViewModel
 import com.example.stockup.ui.theme.StockUPTheme
 
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
 
             StockUPTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
+                    HomeScreen(viewModel = stocksViewModel , modifier = Modifier.padding(innerPadding))
                 }
             }
         }
