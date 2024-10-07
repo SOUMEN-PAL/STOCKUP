@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class StocksViewModel(private val repository: StockRepository ) : ViewModel() {
+class StocksViewModel(private val repository: StockRepository) : ViewModel() {
     private val _StockListState = MutableStateFlow<StockListState>(StockListState.Loading())
     val stockListState = _StockListState.asStateFlow()
 
@@ -33,52 +33,48 @@ class StocksViewModel(private val repository: StockRepository ) : ViewModel() {
         getStocksListings()
     }
 
-    fun getStocksListings(){
+    fun getStocksListings() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.getStocks(exchange.value)
-                _StockListState.value = StockListState.Success<List<StockListData?>>(repository.stockList.value)
-            }catch (e : Exception){
+                _StockListState.value =
+                    StockListState.Success<List<StockListData?>>(repository.stockList.value)
+            } catch (e: Exception) {
                 _StockListState.value = StockListState.Error(e.toString())
             }
         }
     }
 
-    fun getSearchedStocks(){
+    fun getSearchedStocks() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.searchStocks(searchQuery.value)
-                _SearchedStockList.value = StockListState.Success(repository.searchedStockData.value)
-
-            }
-            catch (e : Exception){
+                _SearchedStockList.value =
+                    StockListState.Success(repository.searchedStockData.value)
+            } catch (e: Exception) {
                 _StockListState.value = StockListState.Error(e.toString())
             }
         }
     }
 
-    private var searchJob : Job? = null
+    private var searchJob: Job? = null
 
-    fun onEvent(event : StockPageState){
-        when(event){
+    fun onEvent(event: StockPageState) {
+        when (event) {
             is StockPageState.OnSearchQuery -> {
                 searchJob?.cancel()
                 searchJob = viewModelScope.launch {
-                    delay(500L)
+                    delay(500L) // Debounce
                     getSearchedStocks()
-                    isSearching.value = false
                 }
-
             }
+
             is StockPageState.Refresh -> {
                 getStocksListings()
                 isRefreshed.value = false
             }
         }
     }
-
-
-
 
 
 }

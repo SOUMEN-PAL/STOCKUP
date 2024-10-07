@@ -41,6 +41,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.rememberAsyncImagePainter
+import com.example.stockup.domain.models.stockSearching.StockSearchData
 
 
 @Composable
@@ -100,4 +101,60 @@ fun StockItem(modifier: Modifier = Modifier, stockListData: StockListData , view
 
 }
 
+@Composable
+fun StockItem(modifier: Modifier = Modifier, stockSearchData: StockSearchData , viewModel: StocksViewModel) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            val companyName = stockSearchData.symbol.split(" ")
+            AsyncImage(
+                model = "https://logo.clearbit.com/${companyName.get(0)}.com",
+                contentDescription = "Translated description of what the image contains",
+                modifier = Modifier.weight(1f),
+                placeholder = painterResource(id = R.drawable.warehouse_2897818),
+                error = painterResource(id = R.drawable.warehouse_2897818)
+            )
+
+
+
+
+            Column(modifier = Modifier.weight(3f)) {
+                Row {
+                    Text(
+                        text = stockSearchData.symbol,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                }
+                Text(
+                    text = " (${stockSearchData.symbol})",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                    maxLines = 1
+                )
+            }
+
+            Text(
+                text = stockSearchData.exchange,
+                fontWeight = FontWeight.Medium,
+                fontSize = 12.sp,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        HorizontalDivider(
+            color = Color(0xFF007BFF),
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+        )
+    }
+
+}
 
