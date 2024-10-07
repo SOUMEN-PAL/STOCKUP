@@ -1,5 +1,6 @@
 package com.example.stockup.presentaion.viewmodels
 
+
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.io.IOException
+
 
 class StocksViewModel(private val repository: StockRepository ) : ViewModel() {
     private val _StockListState = MutableStateFlow<StockListState>(StockListState.Loading())
@@ -22,7 +23,7 @@ class StocksViewModel(private val repository: StockRepository ) : ViewModel() {
     private val _SearchedStockList = MutableStateFlow<StockListState>(StockListState.Loading())
     val SearchedStockListState = _SearchedStockList.asStateFlow()
 
-    val exchange = mutableStateOf("BSE")
+    val exchange = mutableStateOf("NYSE")
     val searchQuery = mutableStateOf("")
     val isSearching = mutableStateOf(false)
     val isRefreshed = mutableStateOf(false)
@@ -75,5 +76,9 @@ class StocksViewModel(private val repository: StockRepository ) : ViewModel() {
             }
         }
     }
+
+
+
+
 
 }
