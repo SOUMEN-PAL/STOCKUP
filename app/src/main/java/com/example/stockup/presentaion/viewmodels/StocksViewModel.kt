@@ -1,6 +1,7 @@
 package com.example.stockup.presentaion.viewmodels
 
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 
 class StocksViewModel(private val repository: StockRepository) : ViewModel() {
@@ -34,7 +36,7 @@ class StocksViewModel(private val repository: StockRepository) : ViewModel() {
     }
 
 
-    fun resetSearchStockList(){
+    fun resetSearchStockList() {
         _SearchedStockList.value = StockListState.Loading()
     }
 
@@ -76,7 +78,9 @@ class StocksViewModel(private val repository: StockRepository) : ViewModel() {
 
             is StockPageState.Refresh -> {
                 getStocksListings()
+                Log.d("Refresh", "Yes StockList refreshed")
                 isRefreshed.value = false
+
             }
         }
     }

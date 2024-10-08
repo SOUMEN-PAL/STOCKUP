@@ -1,6 +1,8 @@
 package com.example.stockup.presentaion.stock_listing
 
+import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,9 +13,12 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +39,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,6 +53,7 @@ import com.example.stockup.utils.StockListState
 import com.example.stockup.utils.StockPageState
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
 
@@ -54,10 +61,18 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
     val stockListState by viewModel.stockListState.collectAsStateWithLifecycle()
     val searchedStockState by viewModel.SearchedStockListState.collectAsStateWithLifecycle()
     var stockList: List<Any> = emptyList()
-
-    val focusRequester = remember { FocusRequester() }
-
+    var refreshingStatus by viewModel.isSearching
+    val context = LocalContext.current
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = refreshingStatus,
+        onRefresh = {
+        Toast.makeText( context, "StockList Updated" , Toast.LENGTH_SHORT).show()
+        viewModel.isRefreshed.value = true
+        viewModel.onEvent(StockPageState.Refresh())
+    })
+    Log.d("sValue" , viewModel.isSearching.value.toString())
     Scaffold(
+        modifier = Modifier.pullRefresh(pullRefreshState , true),
         topBar = {
             HomeScreenTopAppBar(viewModel = viewModel)
         }
@@ -65,11 +80,12 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it),
+                .padding(it)
+                .pullRefresh(pullRefreshState , true),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Log.d("searching data", viewModel.isSearching.value.toString())
+            //Log.d("searching data", viewModel.isSearching.value.toString())
 
             when (stockListState) {
                 is StockListState.Error -> Text(
@@ -91,12 +107,6 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
                 is StockListState.Success<*> -> stockList =
                     (stockListState as StockListState.Success<*>).data as List<StockListData>
             }
-
-
-
-
-
-
 
 
 

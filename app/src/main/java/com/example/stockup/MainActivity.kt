@@ -23,12 +23,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val repository = (application as StockUPApplication).repository
-            val stocksViewModel : StocksViewModel = viewModel(factory = StockViewModelFactory(repository))
+            val stocksViewModel: StocksViewModel =
+                viewModel(factory = StockViewModelFactory(repository))
 
             StockUPTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HomeScreen(viewModel = stocksViewModel , modifier = Modifier.padding(innerPadding))
-                }
+
+                HomeScreen(viewModel = stocksViewModel)
+
             }
         }
     }

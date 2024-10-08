@@ -70,7 +70,7 @@ dependencies {
 
 
 
-
+    implementation(libs.androidx.material)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
