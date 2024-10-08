@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockup.presentaion.stock_listing.HomeScreen
+import com.example.stockup.presentaion.viewmodels.StockViewModelFactory
 import com.example.stockup.presentaion.viewmodels.StocksViewModel
 import com.example.stockup.ui.theme.StockUPTheme
 
@@ -21,7 +23,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val repository = (application as StockUPApplication).repository
-            val stocksViewModel = StocksViewModel(repository)
+            val stocksViewModel : StocksViewModel = viewModel(factory = StockViewModelFactory(repository))
 
             StockUPTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
