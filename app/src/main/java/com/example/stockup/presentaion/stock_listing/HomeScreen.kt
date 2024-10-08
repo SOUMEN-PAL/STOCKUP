@@ -18,6 +18,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,114 +50,32 @@ import kotlinx.coroutines.delay
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
 
-    var searchQuery by viewModel.searchQuery
+
     val stockListState by viewModel.stockListState.collectAsStateWithLifecycle()
     val searchedStockState by viewModel.SearchedStockListState.collectAsStateWithLifecycle()
     var stockList: List<Any> = emptyList()
 
     val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
-    var isFocused by rememberSaveable { mutableStateOf(viewModel.isSearching.value) }
 
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Log.d("searching data" , viewModel.isSearching.value.toString())
-
-        when (stockListState) {
-            is StockListState.Error -> Text(
-                "Error: ${(stockListState as StockListState.Error).errorMessage}",
-                Modifier.padding(12.dp)
-            )
-
-            is StockListState.Loading -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator()
-                }
-
-            }
-
-            is StockListState.Success<*> -> stockList =
-                (stockListState as StockListState.Success<*>).data as List<StockListData>
+    Scaffold(
+        topBar = {
+            HomeScreenTopAppBar(viewModel = viewModel)
         }
-
-        Text(
-            text = "STOCKUP",
-            fontSize = 48.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = Color(0xFFF8F9FA),
+    ) {
+        Column(
             modifier = Modifier
-                .background(color = Color(0xFF007BFF))
-                .fillMaxWidth()
-        )
+                .fillMaxSize()
+                .padding(it),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Log.d("searching data", viewModel.isSearching.value.toString())
 
-        Spacer(modifier = Modifier.padding(8.dp))
-
-
-
-
-
-
-
-        //TODO:Remaining to fix search feature
-
-
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = {
-                searchQuery = it
-                viewModel.searchQuery.value = searchQuery
-                viewModel.onEvent(StockPageState.OnSearchQuery(searchQuery))
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-                .focusRequester(focusRequester)
-                .onFocusChanged {focusState->
-                    isFocused = focusState.isFocused
-                    if(isFocused){
-                        viewModel.isSearching.value = true
-                    }
-                                }, // Update state on focus change
-            trailingIcon = {
-                IconButton(onClick = {
-                    if (isFocused) {
-                        viewModel.searchQuery.value = ""
-                        searchQuery = ""
-                        viewModel.resetSearchStockList()
-                        viewModel.isSearching.value = false
-                        focusManager.clearFocus()
-                    } else {
-                        viewModel.isSearching.value = true
-                        focusRequester.requestFocus()
-                    }
-                }) {
-                    if (isFocused) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
-                    } else {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-                    }
-                }
-            }
-        )
-
-
-
-
-
-        if (viewModel.isSearching.value) {
-            when (searchedStockState) {
-                is StockListState.Error -> {
-                    Text("Error: ${(searchedStockState as StockListState.Error).errorMessage}")
-                }
+            when (stockListState) {
+                is StockListState.Error -> Text(
+                    "Error: ${(stockListState as StockListState.Error).errorMessage}",
+                    Modifier.padding(12.dp)
+                )
 
                 is StockListState.Loading -> {
                     Column(
@@ -166,33 +85,60 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
                     ) {
                         CircularProgressIndicator()
                     }
+
                 }
 
-                is StockListState.Success<*> -> {
-                    stockList =
-                        (searchedStockState as StockListState.Success<*>).data as List<StockSearchData>
-                    LazyColumn {
-                        items(stockList) { stock ->
-                            // Display search results
-                            StockItem(stockSearchData = stock as StockSearchData, viewModel = viewModel) // Example: Display the symbol
+                is StockListState.Success<*> -> stockList =
+                    (stockListState as StockListState.Success<*>).data as List<StockListData>
+            }
+
+
+
+
+
+
+
+
+
+
+            if (viewModel.isSearching.value) {
+                when (searchedStockState) {
+                    is StockListState.Error -> {
+                        Text("Error: ${(searchedStockState as StockListState.Error).errorMessage}")
+                    }
+
+                    is StockListState.Loading -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is StockListState.Success<*> -> {
+                        stockList =
+                            (searchedStockState as StockListState.Success<*>).data as List<StockSearchData>
+                        LazyColumn {
+                            items(stockList) { stock ->
+                                // Display search results
+                                StockItem(
+                                    stockSearchData = stock as StockSearchData,
+                                    viewModel = viewModel
+                                ) // Example: Display the symbol
+                            }
                         }
                     }
                 }
-            }
-        } else {
-            // Display the regular stock list
-            LazyColumn {
-                items(stockList) { stock ->
-                    StockItem(stockListData = stock as StockListData, viewModel = viewModel)
+            } else {
+                // Display the regular stock list
+                LazyColumn {
+                    items(stockList) { stock ->
+                        StockItem(stockListData = stock as StockListData, viewModel = viewModel)
+                    }
                 }
             }
         }
     }
-
-    LaunchedEffect(viewModel.isSearching.value) {
-        if(viewModel.isSearching.value) {
-            focusRequester.requestFocus()
-        }
-    }
-
 }
