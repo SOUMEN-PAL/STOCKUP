@@ -112,7 +112,7 @@ fun StockItem(modifier: Modifier = Modifier, stockSearchData: StockSearchData , 
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val companyName = stockSearchData.symbol.split(" ")
+            val companyName = stockSearchData.instrument_name.split(" ")
             AsyncImage(
                 model = "https://logo.clearbit.com/${companyName.get(0)}.com",
                 contentDescription = "Translated description of what the image contains",
@@ -127,7 +127,7 @@ fun StockItem(modifier: Modifier = Modifier, stockSearchData: StockSearchData , 
             Column(modifier = Modifier.weight(3f)) {
                 Row {
                     Text(
-                        text = stockSearchData.symbol,
+                        text = stockSearchData.instrument_name,
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
                         overflow = TextOverflow.Ellipsis,

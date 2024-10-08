@@ -20,10 +20,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,19 +44,28 @@ import com.example.stockup.domain.models.stockSearching.StockSearchData
 import com.example.stockup.presentaion.viewmodels.StocksViewModel
 import com.example.stockup.utils.StockListState
 import com.example.stockup.utils.StockPageState
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
+
     var searchQuery by viewModel.searchQuery
+    val stockListState by viewModel.stockListState.collectAsStateWithLifecycle()
+    val searchedStockState by viewModel.SearchedStockListState.collectAsStateWithLifecycle()
+    var stockList: List<Any> = emptyList()
+
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    var isFocused by rememberSaveable { mutableStateOf(viewModel.isSearching.value) }
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Log.d("searching data" , viewModel.isSearching.value.toString())
 
-        val stockListState by viewModel.stockListState.collectAsStateWithLifecycle()
-        var stockList: List<Any> = emptyList()
         when (stockListState) {
             is StockListState.Error -> Text(
                 "Error: ${(stockListState as StockListState.Error).errorMessage}",
@@ -89,14 +100,62 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
 
         Spacer(modifier = Modifier.padding(8.dp))
 
+
+
+
+
+
+
+        //TODO:Remaining to fix search feature
+
+
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = {
+                searchQuery = it
+                viewModel.searchQuery.value = searchQuery
+                viewModel.onEvent(StockPageState.OnSearchQuery(searchQuery))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+                .focusRequester(focusRequester)
+                .onFocusChanged {focusState->
+                    isFocused = focusState.isFocused
+                    if(isFocused){
+                        viewModel.isSearching.value = true
+                    }
+                                }, // Update state on focus change
+            trailingIcon = {
+                IconButton(onClick = {
+                    if (isFocused) {
+                        viewModel.searchQuery.value = ""
+                        searchQuery = ""
+                        viewModel.resetSearchStockList()
+                        viewModel.isSearching.value = false
+                        focusManager.clearFocus()
+                    } else {
+                        viewModel.isSearching.value = true
+                        focusRequester.requestFocus()
+                    }
+                }) {
+                    if (isFocused) {
+                        Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
+                    } else {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                    }
+                }
+            }
+        )
+
+
+
+
+
         if (viewModel.isSearching.value) {
-            val searchedStockState by viewModel.SearchedStockListState.collectAsStateWithLifecycle()
             when (searchedStockState) {
                 is StockListState.Error -> {
-                    Text(
-                        "Error: ${(stockListState as StockListState.Error).errorMessage}",
-                        Modifier.padding(12.dp)
-                    )
+                    Text("Error: ${(searchedStockState as StockListState.Error).errorMessage}")
                 }
 
                 is StockListState.Loading -> {
@@ -111,74 +170,11 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
 
                 is StockListState.Success<*> -> {
                     stockList =
-                        (stockListState as StockListState.Success<*>).data as List<StockSearchData>
-                }
-            }
-
-        }
-
-
-
-        //TODO:Remaining to fix search feature
-        val focusRequester = remember { FocusRequester() }
-        val focusManager = LocalFocusManager.current
-        var showCloseIcon by remember { mutableStateOf(false) } // Stateto control icon visibility
-
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = {
-                searchQuery = it
-                viewModel.searchQuery.value = searchQuery
-                viewModel.isSearching.value = true
-                viewModel.onEvent(StockPageState.OnSearchQuery(searchQuery))
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-                .focusRequester(focusRequester)
-                .onFocusChanged { showCloseIcon = it.isFocused }, // Update state on focus change
-            trailingIcon = {
-                IconButton(onClick = {
-                    if (showCloseIcon) {
-                        viewModel.searchQuery.value = ""
-                        searchQuery = ""
-                        viewModel.isSearching.value = false
-                        focusManager.clearFocus()
-                    } else {
-                        focusRequester.requestFocus()
-                    }
-                }) {
-                    if (showCloseIcon) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
-                    } else {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-                    }
-                }
-            }
-        )
-
-
-
-
-        val searchedStockState by viewModel.SearchedStockListState.collectAsStateWithLifecycle()
-
-        if (viewModel.isSearching.value) {
-            when (searchedStockState) {
-                is StockListState.Error -> {
-                    Text("Error: ${(searchedStockState as StockListState.Error).errorMessage}")
-                }
-
-                is StockListState.Loading -> {
-                    CircularProgressIndicator()
-                }
-
-                is StockListState.Success<*> -> {
-                    val searchResults =
                         (searchedStockState as StockListState.Success<*>).data as List<StockSearchData>
                     LazyColumn {
-                        items(searchResults) { stock ->
+                        items(stockList) { stock ->
                             // Display search results
-                            StockItem(stockSearchData = stock, viewModel = viewModel) // Example: Display the symbol
+                            StockItem(stockSearchData = stock as StockSearchData, viewModel = viewModel) // Example: Display the symbol
                         }
                     }
                 }
@@ -193,12 +189,10 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
         }
     }
 
+    LaunchedEffect(viewModel.isSearching.value) {
+        if(viewModel.isSearching.value) {
+            focusRequester.requestFocus()
+        }
+    }
 
-//    LazyColumn(
-//
-//    ) {
-//        items(stockList) {
-//            StockItem(stockListData = it as StockListData, viewModel = viewModel)
-//        }
-//    }
 }

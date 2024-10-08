@@ -17,10 +17,10 @@ import kotlinx.coroutines.launch
 
 
 class StocksViewModel(private val repository: StockRepository) : ViewModel() {
-    private val _StockListState = MutableStateFlow<StockListState>(StockListState.Loading())
+    private var _StockListState = MutableStateFlow<StockListState>(StockListState.Loading())
     val stockListState = _StockListState.asStateFlow()
 
-    private val _SearchedStockList = MutableStateFlow<StockListState>(StockListState.Loading())
+    private var _SearchedStockList = MutableStateFlow<StockListState>(StockListState.Loading())
     val SearchedStockListState = _SearchedStockList.asStateFlow()
 
     val exchange = mutableStateOf("NYSE")
@@ -31,6 +31,11 @@ class StocksViewModel(private val repository: StockRepository) : ViewModel() {
 
     init {
         getStocksListings()
+    }
+
+
+    fun resetSearchStockList(){
+        _SearchedStockList.value = StockListState.Loading()
     }
 
     fun getStocksListings() {
