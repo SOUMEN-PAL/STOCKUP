@@ -68,10 +68,14 @@ fun InfoScreen(modifier: Modifier = Modifier, data: StockQuoteModel) {
                         .weight(1f),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    val companyName = data.name.split(" ")
-                    val cleanedCompanyName = data.name?.split(" ")?.map { it.replace("[^A-Za-z0-9 ]".toRegex(), "") } ?: listOf("")
+                    var companyName = data.name?.split(" ")
+                    if (companyName != null) {
+                        if (companyName.isNotEmpty() && companyName[0].contains(',')) {
+                            companyName = companyName[0].split(",")
+                        }
+                    }
                     AsyncImage(
-                        model = "https://logo.clearbit.com/${cleanedCompanyName.get(0)}.com",
+                        model = "https://logo.clearbit.com/${companyName?.get(0)}.com",
                         contentDescription = "Translated description of what the image contains",
                         modifier = Modifier.weight(1f),
                         placeholder = painterResource(id = R.drawable.warehouse_2897818),

@@ -58,10 +58,14 @@ fun StockItem(modifier: Modifier = Modifier, stockListData: StockListData , view
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val companyName = stockListData.name.split(" ")
-            val cleanedCompanyName = stockListData.name?.split(" ")?.map { it.replace("[^A-Za-z0-9 ]".toRegex(), "") } ?: listOf("")
+            var companyName = stockListData.name?.split(" ")
+            if (companyName != null) {
+                if (companyName.isNotEmpty() && companyName[0].contains(',')) {
+                    companyName = companyName[0].split(",")
+                }
+            }
             AsyncImage(
-                model = "https://logo.clearbit.com/${cleanedCompanyName.get(0)}.com",
+                model = "https://logo.clearbit.com/${companyName?.get(0)}.com",
                 contentDescription = "Translated description of what the image contains",
                 modifier = Modifier.weight(1f),
                 placeholder = painterResource(id = R.drawable.warehouse_2897818),
@@ -118,10 +122,14 @@ fun StockItem(modifier: Modifier = Modifier, stockSearchData: StockSearchData , 
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val companyName = stockSearchData.instrument_name.split(" ")
-            val cleanedCompanyName = stockSearchData.instrument_type?.split(" ")?.map { it.replace("[^A-Za-z0-9 ]".toRegex(), "") } ?: listOf("")
+            var companyName = stockSearchData.instrument_name?.split(" ")
+            if (companyName != null) {
+                if (companyName.isNotEmpty() && companyName[0].contains(',')) {
+                    companyName = companyName[0].split(",")
+                }
+            }
             AsyncImage(
-                model = "https://logo.clearbit.com/${cleanedCompanyName.get(0)}.com",
+                model = "https://logo.clearbit.com/${companyName?.get(0)}.com",
                 contentDescription = "Translated description of what the image contains",
                 modifier = Modifier.weight(1f),
                 placeholder = painterResource(id = R.drawable.warehouse_2897818),
