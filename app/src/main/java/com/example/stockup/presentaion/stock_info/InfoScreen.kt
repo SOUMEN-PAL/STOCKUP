@@ -68,12 +68,13 @@ fun InfoScreen(modifier: Modifier = Modifier, data: StockQuoteModel) {
                         .weight(1f),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    var companyName = data.name?.split(" ")
-                    if (companyName != null) {
-                        if (companyName.isNotEmpty() && companyName[0].contains(',')) {
-                            companyName = companyName[0].split(",")
-                        }
-                    }
+                    val companyName = data.name?.split("[ ,]+".toRegex())
+//                    var companyName = data.name?.split(" ")
+//                    if (companyName != null) {
+//                        if (companyName.isNotEmpty() && companyName[0].contains(',')){
+//                            companyName = companyName[0].split(",")
+//                        }
+//                    }
                     AsyncImage(
                         model = "https://logo.clearbit.com/${companyName?.get(0)}.com",
                         contentDescription = "Translated description of what the image contains",

@@ -40,8 +40,10 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.stockup.domain.models.stockSearching.StockSearchData
 
 
@@ -58,18 +60,26 @@ fun StockItem(modifier: Modifier = Modifier, stockListData: StockListData , view
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            var companyName = stockListData.name?.split(" ")
-            if (companyName != null) {
-                if (companyName.isNotEmpty() && companyName[0].contains(',')) {
-                    companyName = companyName[0].split(",")
-                }
-            }
+
+
+            val companyName = stockListData.name?.split("[ ,]+".toRegex())
+
+            val painter = // Add other image loading options here
+                rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = "https://logo.clearbit.com/${companyName?.get(0)}.com")
+                        .apply(block = fun ImageRequest.Builder.() {
+                            crossfade(true)
+                            placeholder(R.drawable.warehouse_2897818)
+                            error(R.drawable.warehouse_2897818)
+                            // Add other image loading options here
+                        }).build()
+                )
+
             AsyncImage(
-                model = "https://logo.clearbit.com/${companyName?.get(0)}.com",
+                model = painter.request,
                 contentDescription = "Translated description of what the image contains",
-                modifier = Modifier.weight(1f),
-                placeholder = painterResource(id = R.drawable.warehouse_2897818),
-                error = painterResource(id = R.drawable.warehouse_2897818)
+                modifier = Modifier.weight(1f)
             )
 
 
@@ -122,18 +132,31 @@ fun StockItem(modifier: Modifier = Modifier, stockSearchData: StockSearchData , 
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            var companyName = stockSearchData.instrument_name?.split(" ")
-            if (companyName != null) {
-                if (companyName.isNotEmpty() && companyName[0].contains(',')) {
-                    companyName = companyName[0].split(",")
-                }
-            }
+            val companyName = stockSearchData.instrument_name?.split("[ ,]+".toRegex())
+//            var companyName = stockSearchData.instrument_name?.split(" ")
+//            if (companyName != null) {
+//                if (companyName.isNotEmpty() && companyName[0].contains(',')) {
+//                    companyName = companyName[0].split(",")
+//                }
+//            }
+
+            val painter = // Add other image loading options here
+                rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = "https://logo.clearbit.com/${companyName?.get(0)}.com")
+                        .apply(block = fun ImageRequest.Builder.() {
+                            crossfade(true)
+                            placeholder(R.drawable.warehouse_2897818)
+                            error(R.drawable.warehouse_2897818)
+                            // Add other image loading options here
+                        }).build()
+                )
+
+
             AsyncImage(
-                model = "https://logo.clearbit.com/${companyName?.get(0)}.com",
+                model = painter.request,
                 contentDescription = "Translated description of what the image contains",
                 modifier = Modifier.weight(1f),
-                placeholder = painterResource(id = R.drawable.warehouse_2897818),
-                error = painterResource(id = R.drawable.warehouse_2897818)
             )
 
 
