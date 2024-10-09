@@ -1,6 +1,7 @@
 package com.example.stockup.domain.repository
 
 import android.content.Context
+import android.util.Log
 import com.example.stockup.data.api.StockService
 import com.example.stockup.domain.models.stockListings.StockListData
 import com.example.stockup.domain.models.stockListings.StockListModel

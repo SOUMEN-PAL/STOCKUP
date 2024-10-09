@@ -12,7 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.stockup.presentaion.navigation.Navigation
 import com.example.stockup.presentaion.stock_listing.HomeScreen
+import com.example.stockup.presentaion.viewmodels.StockDataViewModel
+import com.example.stockup.presentaion.viewmodels.StockDataViewModelFactory
 import com.example.stockup.presentaion.viewmodels.StockViewModelFactory
 import com.example.stockup.presentaion.viewmodels.StocksViewModel
 import com.example.stockup.ui.theme.StockUPTheme
@@ -25,11 +28,10 @@ class MainActivity : ComponentActivity() {
             val repository = (application as StockUPApplication).repository
             val stocksViewModel: StocksViewModel =
                 viewModel(factory = StockViewModelFactory(repository))
-
+            val stockDataViewModel: StockDataViewModel =
+                viewModel(factory = StockDataViewModelFactory(repository))
             StockUPTheme {
-
-                HomeScreen(viewModel = stocksViewModel)
-
+                Navigation(viewModel = stocksViewModel, stockDataViewModel = stockDataViewModel, context = this@MainActivity)
             }
         }
     }

@@ -52,9 +52,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.stockup.domain.models.stockListings.StockListData
 import com.example.stockup.domain.models.stockSearching.StockSearchData
 import com.example.stockup.presentaion.errorHandlingUI.NetworkDialogBox
+import com.example.stockup.presentaion.navigation.Screens
+import com.example.stockup.presentaion.viewmodels.StockDataViewModel
 import com.example.stockup.presentaion.viewmodels.StocksViewModel
 import com.example.stockup.utils.NetworkUtils
 import com.example.stockup.utils.StockListState
@@ -63,7 +66,12 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    viewModel: StocksViewModel,
+    stockDataViewModel: StockDataViewModel,
+    navController: NavController
+) {
 
 
     val stockListState by viewModel.stockListState.collectAsStateWithLifecycle()
@@ -170,7 +178,14 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
                                 // Display search results
                                 StockItem(
                                     stockSearchData = stock as StockSearchData,
-                                    viewModel = viewModel
+                                    viewModel = viewModel,
+                                    onCLick = {
+                                        stockDataViewModel.updateDataParameters(
+                                            stock.symbol,
+                                            stock.exchange
+                                        )
+                                        navController.navigate(Screens.stockDataScreen.route)
+                                    }
                                 ) // Example: Display the symbol
                             }
                         }
@@ -180,7 +195,16 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
                 // Display the regular stock list
                 LazyColumn {
                     items(stockList) { stock ->
-                        StockItem(stockListData = stock as StockListData, viewModel = viewModel)
+                        StockItem(
+                            stockListData = stock as StockListData,
+                            viewModel = viewModel,
+                            onCLick = {
+                                stockDataViewModel.updateDataParameters(
+                                    stock.symbol,
+                                    stock.exchange
+                                )
+                                navController.navigate(Screens.stockDataScreen.route)
+                            })
                     }
                 }
             }

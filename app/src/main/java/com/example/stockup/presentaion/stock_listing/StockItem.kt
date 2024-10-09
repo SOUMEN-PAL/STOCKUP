@@ -34,6 +34,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.height
@@ -45,8 +46,10 @@ import com.example.stockup.domain.models.stockSearching.StockSearchData
 
 
 @Composable
-fun StockItem(modifier: Modifier = Modifier, stockListData: StockListData , viewModel: StocksViewModel) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+fun StockItem(modifier: Modifier = Modifier, stockListData: StockListData , viewModel: StocksViewModel , onCLick: () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth().clickable {
+        onCLick()
+    }) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,8 +59,9 @@ fun StockItem(modifier: Modifier = Modifier, stockListData: StockListData , view
         ) {
 
             val companyName = stockListData.name.split(" ")
+            val cleanedCompanyName = companyName.map { it.replace("[^A-Za-z0-9 ]".toRegex(), "") }
             AsyncImage(
-                model = "https://logo.clearbit.com/${companyName.get(0)}.com",
+                model = "https://logo.clearbit.com/${cleanedCompanyName.get(0)}.com",
                 contentDescription = "Translated description of what the image contains",
                 modifier = Modifier.weight(1f),
                 placeholder = painterResource(id = R.drawable.warehouse_2897818),
@@ -102,8 +106,10 @@ fun StockItem(modifier: Modifier = Modifier, stockListData: StockListData , view
 }
 
 @Composable
-fun StockItem(modifier: Modifier = Modifier, stockSearchData: StockSearchData , viewModel: StocksViewModel) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+fun StockItem(modifier: Modifier = Modifier, stockSearchData: StockSearchData , viewModel: StocksViewModel , onCLick: () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth().clickable {
+        onCLick()
+    }) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,8 +119,9 @@ fun StockItem(modifier: Modifier = Modifier, stockSearchData: StockSearchData , 
         ) {
 
             val companyName = stockSearchData.instrument_name.split(" ")
+            val cleanedCompanyName = companyName.map { it.replace("[^A-Za-z0-9 ]".toRegex(), "") }
             AsyncImage(
-                model = "https://logo.clearbit.com/${companyName.get(0)}.com",
+                model = "https://logo.clearbit.com/${cleanedCompanyName.get(0)}.com",
                 contentDescription = "Translated description of what the image contains",
                 modifier = Modifier.weight(1f),
                 placeholder = painterResource(id = R.drawable.warehouse_2897818),
