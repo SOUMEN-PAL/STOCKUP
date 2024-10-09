@@ -59,7 +59,7 @@ fun StockItem(modifier: Modifier = Modifier, stockListData: StockListData , view
         ) {
 
             val companyName = stockListData.name.split(" ")
-            val cleanedCompanyName = companyName.map { it.replace("[^A-Za-z0-9 ]".toRegex(), "") }
+            val cleanedCompanyName = stockListData.name?.split(" ")?.map { it.replace("[^A-Za-z0-9 ]".toRegex(), "") } ?: listOf("")
             AsyncImage(
                 model = "https://logo.clearbit.com/${cleanedCompanyName.get(0)}.com",
                 contentDescription = "Translated description of what the image contains",
@@ -119,7 +119,7 @@ fun StockItem(modifier: Modifier = Modifier, stockSearchData: StockSearchData , 
         ) {
 
             val companyName = stockSearchData.instrument_name.split(" ")
-            val cleanedCompanyName = companyName.map { it.replace("[^A-Za-z0-9 ]".toRegex(), "") }
+            val cleanedCompanyName = stockSearchData.instrument_type?.split(" ")?.map { it.replace("[^A-Za-z0-9 ]".toRegex(), "") } ?: listOf("")
             AsyncImage(
                 model = "https://logo.clearbit.com/${cleanedCompanyName.get(0)}.com",
                 contentDescription = "Translated description of what the image contains",

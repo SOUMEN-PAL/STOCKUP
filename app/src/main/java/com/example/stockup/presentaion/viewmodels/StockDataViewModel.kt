@@ -25,15 +25,19 @@ class StockDataViewModel(private val repository: StockRepository):ViewModel() {
     val stockQuoteState = _stockQuoteState.asStateFlow()
 
 
-    fun resetState(){
-        _stockQuoteState.value = StockQuoteState.Loading()
-    }
+
 
     fun updateDataParameters(symbol : String , exchange : String){
         _symbol = symbol
         _exchange = exchange
     }
     var dataJob : Job? = null
+
+    fun resetState(){
+        _stockQuoteState.value = StockQuoteState.Loading()
+        dataJob?.cancel()
+    }
+
     fun GetStockData(){
         dataJob?.cancel()
         dataJob = viewModelScope.launch(Dispatchers.IO) {
