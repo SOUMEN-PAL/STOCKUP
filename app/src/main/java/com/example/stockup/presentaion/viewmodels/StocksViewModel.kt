@@ -9,6 +9,7 @@ import com.example.stockup.domain.models.stockListings.StockListData
 import com.example.stockup.domain.repository.StockRepository
 import com.example.stockup.utils.StockListState
 import com.example.stockup.utils.StockPageState
+import com.example.stockup.utils.StockQuoteState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -25,7 +26,10 @@ class StocksViewModel(private val repository: StockRepository) : ViewModel() {
     private var _SearchedStockList = MutableStateFlow<StockListState>(StockListState.Loading())
     val SearchedStockListState = _SearchedStockList.asStateFlow()
 
-    val exchange = mutableStateOf("NYSE")
+    private var _stockQuoteState = MutableStateFlow<StockQuoteState>(StockQuoteState.Loading())
+    val stockQuoteState = _stockQuoteState.asStateFlow()
+
+    private val exchange = mutableStateOf("NYSE")//By default set to NYSE
     val searchQuery = mutableStateOf("")
     val isSearching = mutableStateOf(false)
     val isRefreshed = mutableStateOf(false)
@@ -67,6 +71,20 @@ class StocksViewModel(private val repository: StockRepository) : ViewModel() {
         }
     }
 
+    fun GetStockData(symbol : String , exchange : String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.getStockData(symbol = symbol , exchangeName = exchange)
+                _stockQuoteState.value =
+                    StockQuoteState.Success(repository.stockQuoteData.value)
+
+            }catch (e : Exception){
+                _stockQuoteState.value = StockQuoteState.Error("Few Features may not be Available because of FREE API${e.message}")
+            }
+        }
+    }
+
+
     private var searchJob: Job? = null
 
     fun onEvent(event: StockPageState) {
@@ -87,6 +105,8 @@ class StocksViewModel(private val repository: StockRepository) : ViewModel() {
             }
         }
     }
+
+
 
 
 }

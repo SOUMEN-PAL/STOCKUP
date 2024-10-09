@@ -1,6 +1,7 @@
 package com.example.stockup.data.api
 
 import com.example.stockup.domain.models.stockListings.StockListModel
+import com.example.stockup.domain.models.stockQuote.StockQuoteModel
 import com.example.stockup.domain.models.stockSearching.StockSearchingModel
 import retrofit2.Response
 import retrofit2.http.GET
@@ -17,5 +18,12 @@ interface StockService {
     suspend fun searchSymbol(
         @Query("symbol") symbol : String
     ):Response<StockSearchingModel>
+
+    @GET("quote")
+    suspend fun getStockData(
+        @Query("symbol") symbol : String,
+        @Query("apikey") apikey : String = RetrofitHelper.API_KEY,
+        @Query("exchange") exchange: String
+    ):Response<StockQuoteModel>
 
 }
