@@ -6,19 +6,25 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,7 +54,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.stockup.domain.models.stockListings.StockListData
 import com.example.stockup.domain.models.stockSearching.StockSearchData
+import com.example.stockup.presentaion.errorHandlingUI.NetworkDialogBox
 import com.example.stockup.presentaion.viewmodels.StocksViewModel
+import com.example.stockup.utils.NetworkUtils
 import com.example.stockup.utils.StockListState
 import com.example.stockup.utils.StockPageState
 import kotlinx.coroutines.delay
@@ -62,17 +70,21 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
     val searchedStockState by viewModel.SearchedStockListState.collectAsStateWithLifecycle()
     var stockList: List<Any> = emptyList()
     var refreshingStatus by viewModel.isSearching
+
     val context = LocalContext.current
+    var showDialog by remember { mutableStateOf(false) }//for network error
+
     val pullRefreshState = rememberPullRefreshState(
         refreshing = refreshingStatus,
         onRefresh = {
-        Toast.makeText( context, "StockList Updated" , Toast.LENGTH_SHORT).show()
-        viewModel.isRefreshed.value = true
-        viewModel.onEvent(StockPageState.Refresh())
-    })
-    Log.d("sValue" , viewModel.isSearching.value.toString())
+            Toast.makeText(context, "StockList Updated", Toast.LENGTH_SHORT).show()
+            viewModel.isRefreshed.value = true
+            viewModel.onEvent(StockPageState.Refresh())
+        })
+
+
+
     Scaffold(
-        modifier = Modifier.pullRefresh(pullRefreshState , true),
         topBar = {
             HomeScreenTopAppBar(viewModel = viewModel)
         }
@@ -81,17 +93,40 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: StocksViewModel) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
-                .pullRefresh(pullRefreshState , true),
+                .pullRefresh(pullRefreshState, true),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //Log.d("searching data", viewModel.isSearching.value.toString())
 
             when (stockListState) {
-                is StockListState.Error -> Text(
-                    "Error: ${(stockListState as StockListState.Error).errorMessage}",
-                    Modifier.padding(12.dp)
-                )
+                is StockListState.Error -> {
+                    if (!NetworkUtils.isNetworkAvailable(context)) {
+                        showDialog = true // Show the dialog initially
+                    }
+                    if (showDialog) {
+                        NetworkDialogBox(
+                            showDialog = showDialog,
+                            onClick = {
+                                if (NetworkUtils.isNetworkAvailable(context)) {
+                                    viewModel.resetStockList()
+                                    viewModel.getStocksListings()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Still no internet connection",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }, context = context, viewModel = viewModel
+                        )
+                    } else {
+                        Text(
+                            "Error: ${(stockListState as StockListState.Error).errorMessage}",
+                            Modifier.padding(12.dp)
+                        )
+                    }
+                }
 
                 is StockListState.Loading -> {
                     Column(

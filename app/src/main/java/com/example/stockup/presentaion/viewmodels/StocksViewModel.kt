@@ -39,6 +39,9 @@ class StocksViewModel(private val repository: StockRepository) : ViewModel() {
     fun resetSearchStockList() {
         _SearchedStockList.value = StockListState.Loading()
     }
+    fun resetStockList(){
+        _StockListState.value = StockListState.Loading()
+    }
 
     fun getStocksListings() {
         viewModelScope.launch(Dispatchers.IO) {
