@@ -31,7 +31,11 @@ class MainActivity : ComponentActivity() {
             val stockDataViewModel: StockDataViewModel =
                 viewModel(factory = StockDataViewModelFactory(repository))
             StockUPTheme {
-                Navigation(viewModel = stocksViewModel, stockDataViewModel = stockDataViewModel, context = this@MainActivity)
+                Navigation(
+                    viewModel = stocksViewModel,
+                    stockDataViewModel = stockDataViewModel,
+                    context = this@MainActivity
+                )
             }
         }
     }

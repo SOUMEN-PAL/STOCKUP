@@ -18,6 +18,10 @@ import kotlinx.coroutines.launch
 
 class StockDataViewModel(private val repository: StockRepository):ViewModel() {
 
+    /*
+    Segregated this view model from another StockViewModel to have an individual instance of the
+     Stock data
+    */
     private var _symbol by mutableStateOf("")
     private var _exchange by mutableStateOf("")
 
@@ -48,7 +52,7 @@ class StockDataViewModel(private val repository: StockRepository):ViewModel() {
                 _stockQuoteState.value = if (stockQuoteData != null) {
                     StockQuoteState.Success(stockQuoteData)
                 } else {
-                    StockQuoteState.DataNotAvailable() // Set state to DataNotAvailable if data is null
+                    StockQuoteState.DataNotAvailable() // Set state to DataNotAvailable if data is null for and individual stock
                 }
 
             }catch (e : Exception){

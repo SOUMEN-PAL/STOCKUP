@@ -19,6 +19,7 @@ class StockRepository(
     private val _stockList = MutableStateFlow<List<StockListData>?>(null)
     private val _searchedStockList = MutableStateFlow<List<StockSearchData>?>(null)
     private val _stockQuoteData = MutableStateFlow<StockQuoteModel?>(null)
+    //Exposing the private variables as read only,s
     val stockList = _stockList.asStateFlow()
     val searchedStockData = _searchedStockList.asStateFlow()
     val stockQuoteData = _stockQuoteData.asStateFlow()

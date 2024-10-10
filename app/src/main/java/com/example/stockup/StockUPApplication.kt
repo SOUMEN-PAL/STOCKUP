@@ -12,6 +12,7 @@ class StockUPApplication:Application() {
         super.onCreate()
     }
 
+    //Ensured separation of concern by separating the initialization of the repository from mainActivity to Application context
     private fun initialize(){
         val stockService : StockService = RetrofitHelper.getInstance().create(StockService::class.java)
         repository = StockRepository(stockService , applicationContext)

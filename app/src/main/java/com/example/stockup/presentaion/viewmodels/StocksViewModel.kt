@@ -35,6 +35,7 @@ class StocksViewModel(private val repository: StockRepository) : ViewModel() {
 
 
     init {
+        //Fetching the initial list for the home screen
         getStocksListings()
     }
 
@@ -75,9 +76,12 @@ class StocksViewModel(private val repository: StockRepository) : ViewModel() {
             }
         }
     }
+    //Functions fetching needed symbol and exchange from the private viewmodel variables no exposer of provate variables
+
 
     private var searchJob: Job? = null
 
+    //this function required to monitor the search and monitor searching and refreshing states
     fun onEvent(event: StockPageState) {
         when (event) {
             is StockPageState.OnSearchQuery -> {

@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 
+//Utility functions to check inter availability
 class NetworkUtils {
     companion object{
         fun isNetworkAvailable(context: Context): Boolean {

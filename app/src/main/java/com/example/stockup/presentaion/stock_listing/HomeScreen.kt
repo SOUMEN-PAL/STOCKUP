@@ -76,7 +76,7 @@ fun HomeScreen(
     navController: NavController
 ) {
 
-
+    //Data collection from readonly values in StockViewModel
     val stockListState by viewModel.stockListState.collectAsStateWithLifecycle()
     val searchedStockState by viewModel.SearchedStockListState.collectAsStateWithLifecycle()
     var stockList: List<Any> = emptyList()
