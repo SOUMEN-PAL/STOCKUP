@@ -62,8 +62,14 @@ class StocksViewModel(private val repository: StockRepository) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.searchStocks(searchQuery.value)
-                _SearchedStockList.value =
-                    StockListState.Success(repository.searchedStockData.value)
+                if(repository.searchedStockData.value!!.isEmpty()){
+                    Log.d("data invalid" , "Data empty")
+                    _SearchedStockList.value = StockListState.DataInvalid()
+                }
+                else {
+                    _SearchedStockList.value =
+                        StockListState.Success(repository.searchedStockData.value)
+                }
             } catch (e: Exception) {
                 _StockListState.value = StockListState.Error(e.toString())
             }

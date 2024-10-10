@@ -3,6 +3,7 @@ package com.example.stockup.presentaion.stock_listing
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Refresh
@@ -45,6 +47,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -149,6 +152,22 @@ fun HomeScreen(
 
                 is StockListState.Success<*> -> stockList =
                     (stockListState as StockListState.Success<*>).data as List<StockListData>
+
+                is StockListState.DataInvalid -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Error,
+                            contentDescription = "Invalid Symbol",
+                            tint = Color(0xFFF44336),
+                            modifier = Modifier.size(36.dp)
+                        )
+                        Text(text = "Symbol Invalid")
+                    }
+                }
             }
 
 
@@ -189,6 +208,17 @@ fun HomeScreen(
                                 ) // Example: Display the symbol
                             }
                         }
+                    }
+
+                    is StockListState.DataInvalid -> {
+                        Icon(
+                            imageVector = Icons.Default.Error,
+                            contentDescription = "Invalid Symbol",
+                            tint = Color(0xFFF44336),
+                            modifier = Modifier.size(96.dp)
+                        )
+                        Text(text = "Symbol Invalid !!")
+                        Text(text = "Please enter a valid Symbol")
                     }
                 }
             } else {

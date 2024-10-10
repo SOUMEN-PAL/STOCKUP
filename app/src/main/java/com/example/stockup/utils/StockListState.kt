@@ -4,4 +4,5 @@ sealed class StockListState{
     class Loading():StockListState()
     class Success<T>(val data : T?) : StockListState()
     class Error(val errorMessage: String) : StockListState()
+    class DataInvalid() : StockListState()
 }
