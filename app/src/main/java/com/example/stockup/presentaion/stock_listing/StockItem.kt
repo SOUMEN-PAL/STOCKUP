@@ -62,7 +62,7 @@ fun StockItem(modifier: Modifier = Modifier, stockListData: StockListData , view
 
 
 
-            val companyName = stockListData.name?.split("[ ,]+".toRegex())
+            val companyName = stockListData.name?.split(Regex(" +"))?.map { it.replace("[,.]".toRegex(), "") }
 
             val painter = // Add other image loading options here
                 rememberAsyncImagePainter(
@@ -132,7 +132,7 @@ fun StockItem(modifier: Modifier = Modifier, stockSearchData: StockSearchData , 
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val companyName = stockSearchData.instrument_name?.split("[ ,]+".toRegex())
+            val companyName = stockSearchData.instrument_name?.split(Regex(" +"))?.map { it.replace("[,.]".toRegex(), "") }
 //            var companyName = stockSearchData.instrument_name?.split(" ")
 //            if (companyName != null) {
 //                if (companyName.isNotEmpty() && companyName[0].contains(',')) {

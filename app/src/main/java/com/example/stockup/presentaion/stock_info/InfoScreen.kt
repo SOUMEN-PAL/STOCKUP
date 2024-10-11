@@ -68,7 +68,7 @@ fun InfoScreen(modifier: Modifier = Modifier, data: StockQuoteModel) {
                         .weight(1f),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    val companyName = data.name?.split("[ ,]+".toRegex())
+                    val companyName = data.name?.split(Regex(" +"))?.map { it.replace("[,.]".toRegex(), "") }
 //                    var companyName = data.name?.split(" ")
 //                    if (companyName != null) {
 //                        if (companyName.isNotEmpty() && companyName[0].contains(',')){
