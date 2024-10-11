@@ -43,7 +43,19 @@ This project uses the following dependencies:
   
 * The app does not require any data persistence.  
 * The UI is designed to be simple and easy to use.  
-* Error handling and loading states are implemented to provide a smooth user experience.  
+* Error handling and loading states are implemented to provide a smooth user experience.
+* Click on the listed items to see the prices and percentage change
+## App Images and Demostrations
+  * ** Multi Size Screen Support
+    *https://github.com/user-attachments/assets/93477224-737f-4af0-955d-53a43f446283
+  * ** App Screens
+    *![HomeScreen](https://github.com/user-attachments/assets/30758539-0051-435b-b43d-5c7447942aa6)
+    *![SearchStockScreen](https://github.com/user-attachments/assets/986fa2bb-e714-4f2d-8bef-c35bda2f7856)
+    *![SearchedStock](https://github.com/user-attachments/assets/29a4d61b-2528-4871-897e-3ebdd629fdb5)
+    *![InvalidSymbol](https://github.com/user-attachments/assets/a8899e16-c58a-461c-86b8-5e74216ee1fb)
+    *![NetworkError](https://github.com/user-attachments/assets/df89533c-8e8c-4185-b243-0dc1cf2a31b1)
+  * ** Network Error Demostration
+    *https://github.com/user-attachments/assets/345fcc6e-1403-4a25-9e29-0f234e20aa9b
 
 ## Contributing  
   
