@@ -59,6 +59,7 @@ fun HomeScreenTopAppBar(modifier: Modifier = Modifier, viewModel: StocksViewMode
 
         OutlinedTextField(
             value = searchQuery,
+            singleLine = true,
             onValueChange = {
                 searchQuery = it
                 viewModel.searchQuery.value = searchQuery
