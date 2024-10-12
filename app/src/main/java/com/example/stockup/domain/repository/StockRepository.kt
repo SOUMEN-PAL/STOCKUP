@@ -50,7 +50,7 @@ class StockRepository(
         val response = stockService.getStockData(symbol = symbol, exchange = exchangeName)
         if (response.isSuccessful) {
             val responseBody = response.body()?.string()
-            val gson = Gson()
+            val gson = Gson()//there were two kind of responses that were leading to some errors that needed a parser
 
             try {
                 val stockQuote = gson.fromJson(responseBody, StockQuoteModel::class.java)
