@@ -95,7 +95,7 @@ fun InfoScreen(modifier: Modifier = Modifier, data: StockQuoteModel) {
                         textDecoration = TextDecoration.Underline
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = data.name, fontSize = 20.sp , overflow = TextOverflow.Ellipsis)
+                    Text(text = data.name?: "N/A", fontSize = 20.sp , overflow = TextOverflow.Ellipsis)
                 }
 
                 Column(
@@ -125,7 +125,7 @@ fun InfoScreen(modifier: Modifier = Modifier, data: StockQuoteModel) {
                     )
                     Text(
                         text = data.percent_change + " %",
-                        color = if (data.percent_change.toFloat() > 0.0) {
+                        color = if (data.percent_change?.toFloatOrNull() ?: 0f > 0.0) {
                             Color(0xFF28A745)
                         } else {
                             Color(0xFFDC3545)

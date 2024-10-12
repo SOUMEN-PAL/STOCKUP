@@ -50,7 +50,7 @@ fun StockDataScreen(modifier: Modifier = Modifier  , viewModel: StockDataViewMod
     val dataState = viewModel.stockQuoteState.collectAsStateWithLifecycle()
 
 
-    LaunchedEffect(Dispatchers.IO) {
+    LaunchedEffect(Unit) {
         viewModel.GetStockData()
     }
 
